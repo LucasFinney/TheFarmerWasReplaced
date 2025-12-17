@@ -3,32 +3,35 @@ from __builtins__ import *
 clear()
 
 # auto_crt_bsh_grs.py
-# 3x3 farm only: use iterators `i` (column) and `j` (row) — no variable assignment allowed.
-# Layout per 3-column group:
-#   i==0 -> grass (leave)
-#   i==1 -> bushes
-#   i==2 -> carrots (till then plant)
+# Preparation pass (run once):
+#  - Column 0: grass (leave)
+#  - Column 1: plant bushes on every tile
+#  - Column 2: till once and plant carrots on every tile
 
+# prepare the farm (3x3 fixed)
+for i in range(3):
+	for j in range(3):
+		if i == 0:
+			pass
+		elif i == 1:
+			plant(Entities.Bush)
+		else:
+			# till once, then plant carrots
+			till()
+			plant(Entities.Carrot)
+		move(North)
+	move(East)
+
+# Farming loop: harvest when ready and replant (do not retill carrots)
 while True:
-	# columns i = 0..2
 	for i in range(3):
-		# rows j = 0..2 (fixed 3x3 farm)
 		for j in range(3):
 			if can_harvest():
 				harvest()
-
-			if i == 0:
-				# grass column: nothing to do
-				pass
-			elif i == 1:
-				# bush column: plant on checker pattern
-				if (i + j) % 2 == 0:
+				# replant according to column
+				if i == 1:
 					plant(Entities.Bush)
-			else:
-				# carrot column: till then plant on checker pattern
-				if (i + j) % 2 == 0:
-					till()
+				elif i == 2:
 					plant(Entities.Carrot)
-
 			move(North)
 		move(East)
