@@ -7,7 +7,7 @@ from field_lib import prepare_field_linear, farm_pass_linear
 
 # Preparation pass (run once), then continuous farming loop
 size = get_world_size()
-crops = [Entities.Bush, Entities.Tree,Entities.Pumpkin]
+crops = [Entities.Grass, Entities.Grass, Entities.Tree]
 prepare_field_linear(size, crops)
 while True:
 	farm_pass_linear(size, crops)
