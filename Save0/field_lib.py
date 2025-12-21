@@ -79,6 +79,20 @@ def prepare_field(size, primary_crop=None):
 			move(North)
 		move(East)
 
+def default_mix(size,i,j):
+	# """Prepare the default mixed crop pattern for an NxN field."""
+	if i % 3 ==0 and j % 2 == 1:
+		ensure_tree()
+	elif i % 3 == 1:
+		if j % 2 == 0:
+			ensure_tree()
+		else:
+			ensure_bush()
+	elif i % 3 == 2:
+		# if soil was reset, re-till; then plant carrot
+		if get_ground_type() != Grounds.Soil:
+			till()
+		ensure_carrot()
 
 def farm_pass(size, primary_crop=None):
 	# """Perform a single farming pass.
@@ -93,18 +107,7 @@ def farm_pass(size, primary_crop=None):
 			if can_harvest():
 				harvest()
 				if primary_crop == None:
-					if col == 0 and j % 2 == 1:
-						ensure_tree()
-					elif col == 1:
-						if j % 2 == 0:
-							ensure_tree()
-						else:
-							ensure_bush()
-					elif col == 2:
-						# if soil was reset, re-till; then plant carrot
-						if get_ground_type() != Grounds.Soil:
-							till()
-						ensure_carrot()
+					default_mix(size,i,j)
 				else:
 					# dedicated crop: ensure it is replanted/tiled appropriately
 					ensure_entity(primary_crop)
