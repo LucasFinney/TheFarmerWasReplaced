@@ -105,7 +105,6 @@ def farm_pass(size, primary_crop=None):
 	for i in range(size):
 		for j in range(size):
 			crop = i % len(primary_crop)
-			print(crop)
 			if can_harvest():
 				harvest()
 				if primary_crop == None:
