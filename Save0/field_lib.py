@@ -135,3 +135,25 @@ def prepare_pumpkin_field(size):
 def farm_pass_pumpkins(size):
 	# """Backward-compatible API: single-pass pumpkin farming using generic helper."""
 	farm_pass(size, primary_crop=Entities.Pumpkin)
+
+
+# --- Test helpers ---------------------------------------------------------
+
+def run_once(size, primary_crop=None, prepare=True, farm=True):
+	# """Run a single prepare and/or farm pass and then stop.
+
+	# This is useful for testing changes in-game without leaving a continuous
+	# `while True` loop running. Example usages:
+	
+	# # Prepare a dedicated pumpkin field and do a single farming pass
+	# from field_lib import run_once
+	# size = get_world_size()
+	# run_once(size, primary_crop=Entities.Pumpkin)
+
+	# # Run only a single farm pass on the existing field
+	# run_once(size, primary_crop=None, prepare=False, farm=True)
+	# """
+	if prepare:
+		prepare_field(size, primary_crop=primary_crop)
+	if farm:
+		farm_pass(size, primary_crop=primary_crop)
