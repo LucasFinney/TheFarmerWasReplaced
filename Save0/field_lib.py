@@ -73,13 +73,18 @@ def prepare_field(size, primary_crop=None):
 	# If `primary_crop` is None the original mixed-column pattern is used.
 	# If `primary_crop` is provided, every tile is prepared/seeded with that crop.
 	# """
+	crops = []
+	if len(primary_crop) > 1:
+		crops += primary_crop
+	else:
+		crops.append(primary_crop)
 	for i in range(size):
-		crop = i % len(primary_crop)
+		crop = i % len(crops)
 		for j in range(size):
-			if primary_crop == None:
+			if crops[crop] == None:
 				prepare_tile(i, j)
 			else:
-				ensure_entity(primary_crop)
+				ensure_entity(crops[crop])
 			water_check()
 			move(North)
 		move(East)
@@ -96,20 +101,24 @@ def farm_pass(size, primary_crop=None):
 	# cycle grass/tree, tree/bush, and carrots. If `primary_crop` is provided,
 	# the farm is treated as dedicated to that crop (pumpkins, carrots, etc.).
 	# If primary_crop is a list, then iterate through the list for planting.
+	crops = []
+	if len(primary_crop) > 1:
+		crops += primary_crop
+	else:
+		crops.append(primary_crop)
 	for i in range(size):
 		for j in range(size):
-			crop = i % len(primary_crop)
+			crop = i % len(crops)
 			if can_harvest():
 				harvest()
-				if primary_crop == None:
+				if crops[crop] == None:
 					default_mix(size,i,j)
 				else:
 					# dedicated crop: ensure it is replanted/tiled appropriately
-					ensure_entity(primary_crop[crop])
+					ensure_entity(crops[crop])
 			# if not harvesting, check for unused tiles in dedicated crop mode
 			elif primary_crop != None:
 				ensure_entity(primary_crop[crop])
-				ensure_entity(primary_crop)
 			water_check()
 			move(North)
 		move(East)
@@ -125,18 +134,23 @@ def prepare_field_linear(size, primary_crop=None):
 	# used for every tile. A 1-element "list" is created to avoid errors. 
 	# """
 	crops = []
-	crops.append(primary_crop)
+	if len(primary_crop) > 1:
+		crops += primary_crop
+	else:
+		crops.append(primary_crop)
 	if primary_crop == None:
 		for i in range(size):
 			for j in range(size):
+				water_check()
 				prepare_tile(i, j)
 				move(North)
 			move(East)
 	else:
 		# single entity: treat as dedicated crop for entire field
-		if len(crops) != 1:
+		if len(crops) == 1:
 			for i in range(size):
 				for j in range(size):
+					water_check()
 					ensure_entity(primary_crop)
 					move(North)
 				move(East)
@@ -144,6 +158,7 @@ def prepare_field_linear(size, primary_crop=None):
 			k = 0
 			for i in range(size):
 				for j in range(size):
+					water_check()
 					crop = primary_crop[k % len(primary_crop)]
 					ensure_entity(crop)
 					k += 1
@@ -152,40 +167,16 @@ def prepare_field_linear(size, primary_crop=None):
 
 
 def farm_pass_linear(size, primary_crop=None):
-	# """Perform a single farming pass using a linear repeating sequence of crops.
-	# For `primary_crop` lists, the k-th tile visited (column-major ordering)
-	# uses `primary_crop[k % len(primary_crop)]`. If a single entity is passed,
-	# that entity is used for every tile. A 1-element "list" is created to avoid errors. 
-	# When `primary_crop` is None the
-	# original `default_mix` behaviour is used after harvesting.
-	# """
-	# crops = []
-	# crops.append(primary_crop)
-	# for i in range(size):
-	# 	for j in range(size):
-	# 		k = i * size + j
-	# 		if primary_crop == None:
-	# 			if can_harvest():
-	# 				harvest()
-	# 				default_mix(size, i, j)
-	# 		else:
-	# 			# single entity support
-	# 			if len(crops) == 1:
-	# 				crop = crops[0]
-	# 			else:
-	# 				crop = crops[k % len(crops)]
-	# 			if can_harvest():
-	# 				harvest()
-	# 				ensure_entity(crop)
-	# 			else:
-	# 				ensure_entity(crop)
-	# 		move(North)
-	# 	move(East)
+	# Perform a single farming pass using a linear repeating sequence of crops.
 	crops = []
-	crops.append(primary_crop)
+	if len(primary_crop) > 1:
+		crops += primary_crop
+	else:
+		crops.append(primary_crop)
 	if primary_crop == None:
 		for i in range(size):
 			for j in range(size):
+				water_check()
 				if can_harvest():
 					harvest()
 					default_mix(size,i,j)
@@ -193,9 +184,10 @@ def farm_pass_linear(size, primary_crop=None):
 			move(East)
 	else:
 		# single entity: treat as dedicated crop for entire field
-		if len(crops) != 1:
+		if len(crops) == 1:
 			for i in range(size):
 				for j in range(size):
+					water_check()
 					if can_harvest():
 						harvest()
 					ensure_entity(primary_crop)
@@ -205,6 +197,7 @@ def farm_pass_linear(size, primary_crop=None):
 			k = 0
 			for i in range(size):
 				for j in range(size):
+					water_check()
 					if can_harvest():
 						harvest()
 					crop = primary_crop[k % len(primary_crop)]
