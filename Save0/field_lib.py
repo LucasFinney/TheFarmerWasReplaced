@@ -205,32 +205,6 @@ def farm_pass_linear(size, primary_crop=None):
 					k += 1
 					move(North)
 				move(East)
-	
-
-
-# --- Pumpkin helpers -------------------------------------------------------
-
-def ensure_pumpkin():
-	# """Ensure soil is tilled and a pumpkin is planted on the current tile.
-
-	# Pumpkins behave like carrots: they require tilling before planting.
-	# This helper is idempotent (safe to call repeatedly).
-	# """
-	if get_ground_type() != Grounds.Soil:
-		till()
-	if get_entity_type() != Entities.Pumpkin:
-		plant(Entities.Pumpkin)
-
-
-def prepare_pumpkin_field(size):
-	# """Backward-compatible API: prepare an NxN pumpkin field using the
-	# general `prepare_field` helper under the hood."""
-	prepare_field(size, Entities.Pumpkin)
-
-
-def farm_pass_pumpkins(size):
-	# """Backward-compatible API: single-pass pumpkin farming using generic helper."""
-	farm_pass(size, Entities.Pumpkin)
 
 
 # --- Test helpers ---------------------------------------------------------
