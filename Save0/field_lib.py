@@ -119,6 +119,70 @@ def farm_pass(size, primary_crop=None):
 		move(East)
 
 
+def prepare_field_linear(size, primary_crop=None):
+	# """Prepare an NxN field using a linear repeating sequence of crops.
+
+	# Traversal order matches the original helpers (column-major travel: move
+	# North across a column, then East to the next column). If `primary_crop`
+	# is a list, its elements are used in sequence for every tile traversed;
+	# if a single entity is passed (for backward compatibility), that entity is
+	# used for every tile.
+	# """
+	if primary_crop is None:
+		for i in range(size):
+			for j in range(size):
+				prepare_tile(i, j)
+				move(North)
+			move(East)
+	else:
+		# single entity: treat as dedicated crop for entire field
+		if not hasattr(primary_crop, "__len__") or not hasattr(primary_crop, "__getitem__"):
+			for i in range(size):
+				for j in range(size):
+					ensure_entity(primary_crop)
+					move(North)
+				move(East)
+		else:
+			k = 0
+			for i in range(size):
+				for j in range(size):
+					crop = primary_crop[k % len(primary_crop)]
+					ensure_entity(crop)
+					k += 1
+					move(North)
+				move(East)
+
+
+def farm_pass_linear(size, primary_crop=None):
+	# """Perform a single farming pass using a linear repeating sequence of crops.
+
+	# For `primary_crop` lists, the k-th tile visited (column-major ordering)
+	# uses `primary_crop[k % len(primary_crop)]`. If a single entity is passed,
+	# that entity is used for every tile. When `primary_crop` is None the
+	# original `default_mix` behaviour is used after harvesting.
+	# """
+	for i in range(size):
+		for j in range(size):
+			k = i * size + j
+			if primary_crop is None:
+				if can_harvest():
+					harvest()
+					default_mix(size, i, j)
+			else:
+				# single entity support
+				if not hasattr(primary_crop, "__len__") or not hasattr(primary_crop, "__getitem__"):
+					crop = primary_crop
+				else:
+					crop = primary_crop[k % len(primary_crop)]
+				if can_harvest():
+					harvest()
+					ensure_entity(crop)
+				else:
+					ensure_entity(crop)
+			move(North)
+		move(East)
+
+
 # --- Pumpkin helpers -------------------------------------------------------
 
 def ensure_pumpkin():
