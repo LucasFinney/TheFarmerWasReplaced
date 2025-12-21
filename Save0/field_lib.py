@@ -79,9 +79,14 @@ def prepare_field(size, primary_crop=None):
 				prepare_tile(i, j)
 			else:
 				ensure_entity(primary_crop)
+			water_check()
 			move(North)
 		move(East)
 
+def water_check():
+	###Water the current tile if not already watered.###
+	if get_water() < 0.2:
+		use_item(Items.Water)
 
 def farm_pass(size, primary_crop=None):
 	# """Perform a single farming pass.
@@ -114,6 +119,7 @@ def farm_pass(size, primary_crop=None):
 			# if not harvesting, check for unused tiles in dedicated crop mode
 			elif primary_crop != None:
 				ensure_entity(primary_crop)
+			water_check()
 			move(North)
 		move(East)
 

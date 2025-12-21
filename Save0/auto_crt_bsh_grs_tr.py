@@ -7,8 +7,8 @@ from field_lib import prepare_field, farm_pass
 
 # Preparation pass (run once), then continuous farming loop
 size = get_world_size()
-prepare_field(size, Entities.Pumpkin)
+prepare_field(size)
 
 while True:
-	farm_pass(size, Entities.Pumpkin)
+	farm_pass(size)
 		
