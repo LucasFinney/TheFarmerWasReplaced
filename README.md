@@ -23,5 +23,3 @@ Next steps / TODO
 - Generalize mixed-field configurations: design a compact way to specify arbitrary crop distributions (e.g., a pattern list or weight-based placement) so new crops can be added without per-crop branching.
 - Add a one-pass test helper (non-looping) to safely validate changes in-game before running continuous loops.  (Added: `field_lib.run_once`.)
 - Add small docs/examples for how to run and test each script in the TFWR UI.
-
-If you want, I can open a PR with this README update now and tag it `v0.3` as a milestone for the pumpkin support and refactor.
