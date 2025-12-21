@@ -129,6 +129,7 @@ def prepare_field_linear(size, primary_crop=None):
 	if primary_crop == None:
 		for i in range(size):
 			for j in range(size):
+				water_check()
 				prepare_tile(i, j)
 				move(North)
 			move(East)
@@ -137,6 +138,7 @@ def prepare_field_linear(size, primary_crop=None):
 		if len(crops) != 1:
 			for i in range(size):
 				for j in range(size):
+					water_check()
 					ensure_entity(primary_crop)
 					move(North)
 				move(East)
@@ -144,6 +146,7 @@ def prepare_field_linear(size, primary_crop=None):
 			k = 0
 			for i in range(size):
 				for j in range(size):
+					water_check()
 					crop = primary_crop[k % len(primary_crop)]
 					ensure_entity(crop)
 					k += 1
@@ -152,40 +155,13 @@ def prepare_field_linear(size, primary_crop=None):
 
 
 def farm_pass_linear(size, primary_crop=None):
-	# """Perform a single farming pass using a linear repeating sequence of crops.
-	# For `primary_crop` lists, the k-th tile visited (column-major ordering)
-	# uses `primary_crop[k % len(primary_crop)]`. If a single entity is passed,
-	# that entity is used for every tile. A 1-element "list" is created to avoid errors. 
-	# When `primary_crop` is None the
-	# original `default_mix` behaviour is used after harvesting.
-	# """
-	# crops = []
-	# crops.append(primary_crop)
-	# for i in range(size):
-	# 	for j in range(size):
-	# 		k = i * size + j
-	# 		if primary_crop == None:
-	# 			if can_harvest():
-	# 				harvest()
-	# 				default_mix(size, i, j)
-	# 		else:
-	# 			# single entity support
-	# 			if len(crops) == 1:
-	# 				crop = crops[0]
-	# 			else:
-	# 				crop = crops[k % len(crops)]
-	# 			if can_harvest():
-	# 				harvest()
-	# 				ensure_entity(crop)
-	# 			else:
-	# 				ensure_entity(crop)
-	# 		move(North)
-	# 	move(East)
+	# Perform a single farming pass using a linear repeating sequence of crops.
 	crops = []
 	crops.append(primary_crop)
 	if primary_crop == None:
 		for i in range(size):
 			for j in range(size):
+				water_check()
 				if can_harvest():
 					harvest()
 					default_mix(size,i,j)
@@ -196,6 +172,7 @@ def farm_pass_linear(size, primary_crop=None):
 		if len(crops) != 1:
 			for i in range(size):
 				for j in range(size):
+					water_check()
 					if can_harvest():
 						harvest()
 					ensure_entity(primary_crop)
@@ -205,6 +182,7 @@ def farm_pass_linear(size, primary_crop=None):
 			k = 0
 			for i in range(size):
 				for j in range(size):
+					water_check()
 					if can_harvest():
 						harvest()
 					crop = primary_crop[k % len(primary_crop)]
