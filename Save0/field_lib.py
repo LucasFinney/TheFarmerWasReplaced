@@ -108,6 +108,9 @@ def farm_pass(size, primary_crop=None):
 				else:
 					# dedicated crop: ensure it is replanted/tiled appropriately
 					ensure_entity(primary_crop)
+			# if not harvesting, check for unused tiles in dedicated crop mode
+			elif primary_crop != None:
+				ensure_entity(primary_crop)
 			move(North)
 		move(East)
 
@@ -129,12 +132,12 @@ def ensure_pumpkin():
 def prepare_pumpkin_field(size):
 	# """Backward-compatible API: prepare an NxN pumpkin field using the
 	# general `prepare_field` helper under the hood."""
-	prepare_field(size, primary_crop=Entities.Pumpkin)
+	prepare_field(size, Entities.Pumpkin)
 
 
 def farm_pass_pumpkins(size):
 	# """Backward-compatible API: single-pass pumpkin farming using generic helper."""
-	farm_pass(size, primary_crop=Entities.Pumpkin)
+	farm_pass(size, Entities.Pumpkin)
 
 
 # --- Test helpers ---------------------------------------------------------
@@ -148,12 +151,12 @@ def run_once(size, primary_crop=None, prepare=True, farm=True):
 	# # Prepare a dedicated pumpkin field and do a single farming pass
 	# from field_lib import run_once
 	# size = get_world_size()
-	# run_once(size, primary_crop=Entities.Pumpkin)
+	# run_once(size, Entities.Pumpkin)
 
 	# # Run only a single farm pass on the existing field
 	# run_once(size, primary_crop=None, prepare=False, farm=True)
 	# """
 	if prepare:
-		prepare_field(size, primary_crop=primary_crop)
+		prepare_field(size, primary_crop)
 	if farm:
-		farm_pass(size, primary_crop=primary_crop)
+		farm_pass(size, primary_crop)
