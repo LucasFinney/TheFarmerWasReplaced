@@ -1,2 +1,1 @@
-crops = [Entities.Bush]
-print(len(crops))
+# Use as a testing ground
