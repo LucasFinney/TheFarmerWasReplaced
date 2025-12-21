@@ -45,6 +45,9 @@ def ensure_entity(entity):
 
 def prepare_tile(col, row):
 	###Prepare a single tile based on repeating column pattern.
+	# Every tile is watered as part of preparation.
+	# Watering is idempotent (safe to call multiple times).
+	use_item(Items.Water)
 
 	# Pattern (col % 3):
 	#   0 -> alternating grass/tree (tree on odd rows)
