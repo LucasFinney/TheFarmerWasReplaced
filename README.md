@@ -9,6 +9,9 @@ Notes
 - Edit scripts under `SaveX/` and use the game to run/test changes — the `__builtins__.py` file is a type-hint shim only.
 - Avoid committing `save.json` (contains local UI state). It's listed in `.gitignore`.
 
+## TO DO
+- Automate crop selection based on player inventory? (IE. Check what's running low and adjust planting procedure accordingly)
+
 Progress log
 
 - Added `.github/copilot-instructions.md` to describe workspace-specific guidance for AI agents.
