@@ -71,11 +71,12 @@ def prepare_field(size, primary_crop=None):
 	# If `primary_crop` is provided, every tile is prepared/seeded with that crop.
 	# """
 	for i in range(size):
+		crop = i % len(primary_crop)
 		for j in range(size):
 			if primary_crop == None:
 				prepare_tile(i, j)
 			else:
-				ensure_entity(primary_crop)
+				ensure_entity(primary_crop[crop])
 			move(North)
 		move(East)
 
@@ -95,25 +96,26 @@ def default_mix(size,i,j):
 		ensure_carrot()
 
 def farm_pass(size, primary_crop=None):
-	# """Perform a single farming pass.
+	# Perform a single farming pass.
 
 	# If `primary_crop` is None, the original mixed pattern is used where columns
 	# cycle grass/tree, tree/bush, and carrots. If `primary_crop` is provided,
 	# the farm is treated as dedicated to that crop (pumpkins, carrots, etc.).
-	# """
+	# If primary_crop is a list, then iterate through the list for planting.
 	for i in range(size):
 		for j in range(size):
-			col = i % 3
+			crop = i % len(primary_crop)
+			print(crop)
 			if can_harvest():
 				harvest()
 				if primary_crop == None:
 					default_mix(size,i,j)
 				else:
 					# dedicated crop: ensure it is replanted/tiled appropriately
-					ensure_entity(primary_crop)
+					ensure_entity(primary_crop[crop])
 			# if not harvesting, check for unused tiles in dedicated crop mode
 			elif primary_crop != None:
-				ensure_entity(primary_crop)
+				ensure_entity(primary_crop[crop])
 			move(North)
 		move(East)
 
