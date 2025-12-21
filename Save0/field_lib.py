@@ -1,7 +1,6 @@
 from __builtins__ import *
 
 ###Helper functions for preparing and farming the field.
-
 # These functions operate on the current drone position and assume the caller
 # moves the drone appropriately (the scripts in this repo iterate rows/cols
 # and call these helpers while moving the drone).
@@ -27,6 +26,23 @@ def ensure_carrot():
 		plant(Entities.Carrot)
 
 
+# Generic helpers ---------------------------------------------------------
+
+def needs_till(entity):
+	# """Return True if the entity requires tilling before planting."""
+	return entity in (Entities.Carrot, Entities.Pumpkin)
+
+
+def ensure_entity(entity):
+	# """Ensure the given entity is present on the current tile
+	# If the entity requires tilling, till first. This function is idempotent.
+	# """
+	if needs_till(entity) and get_ground_type() != Grounds.Soil:
+		till()
+	if get_entity_type() != entity:
+		plant(entity)
+
+
 def prepare_tile(col, row):
 	###Prepare a single tile based on repeating column pattern.
 
@@ -48,34 +64,50 @@ def prepare_tile(col, row):
 		ensure_carrot()
 
 
-def prepare_field(size):
-	###Do a full preparation pass for an NxN field.###
+def prepare_field(size, primary_crop=None):
+	# """Do a full preparation pass for an NxN field.
+
+	# If `primary_crop` is None the original mixed-column pattern is used.
+	# If `primary_crop` is provided, every tile is prepared/seeded with that crop.
+	# """
 	for i in range(size):
 		for j in range(size):
-			prepare_tile(i, j)
+			if primary_crop == None:
+				prepare_tile(i, j)
+			else:
+				ensure_entity(primary_crop)
 			move(North)
 		move(East)
 
 
-def farm_pass(size):
-	###Perform a single farming pass: harvest and replant as appropriate.###
+def farm_pass(size, primary_crop=None):
+	# """Perform a single farming pass.
+
+	# If `primary_crop` is None, the original mixed pattern is used where columns
+	# cycle grass/tree, tree/bush, and carrots. If `primary_crop` is provided,
+	# the farm is treated as dedicated to that crop (pumpkins, carrots, etc.).
+	# """
 	for i in range(size):
 		for j in range(size):
 			col = i % 3
 			if can_harvest():
 				harvest()
-				if col == 0 and j % 2 == 1:
-					ensure_tree()
-				elif col == 1:
-					if j % 2 == 0:
+				if primary_crop == None:
+					if col == 0 and j % 2 == 1:
 						ensure_tree()
-					else:
-						ensure_bush()
-				elif col == 2:
-					# if soil was reset, re-till; then plant carrot
-					if get_ground_type() != Grounds.Soil:
-						till()
-					ensure_carrot()
+					elif col == 1:
+						if j % 2 == 0:
+							ensure_tree()
+						else:
+							ensure_bush()
+					elif col == 2:
+						# if soil was reset, re-till; then plant carrot
+						if get_ground_type() != Grounds.Soil:
+							till()
+						ensure_carrot()
+				else:
+					# dedicated crop: ensure it is replanted/tiled appropriately
+					ensure_entity(primary_crop)
 			move(North)
 		move(East)
 
@@ -95,25 +127,11 @@ def ensure_pumpkin():
 
 
 def prepare_pumpkin_field(size):
-	# """Prepare an NxN field dedicated to pumpkins.
-
-	# This tills and plants pumpkins on every tile in the field.
-	# """
-	for i in range(size):
-		for j in range(size):
-			ensure_pumpkin()
-			move(North)
-		move(East)
+	# """Backward-compatible API: prepare an NxN pumpkin field using the
+	# general `prepare_field` helper under the hood."""
+	prepare_field(size, primary_crop=Entities.Pumpkin)
 
 
 def farm_pass_pumpkins(size):
-	# """Perform a single farming pass for pumpkins: harvest and replant."""
-	for i in range(size):
-		for j in range(size):
-			if can_harvest():
-				harvest()
-				# replant pumpkin if necessary
-				if get_entity_type() != Entities.Pumpkin:
-					ensure_pumpkin()
-			move(North)
-		move(East)
+	# """Backward-compatible API: single-pass pumpkin farming using generic helper."""
+	farm_pass(size, primary_crop=Entities.Pumpkin)
