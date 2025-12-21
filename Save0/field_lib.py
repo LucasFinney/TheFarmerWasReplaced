@@ -129,12 +129,12 @@ def ensure_pumpkin():
 def prepare_pumpkin_field(size):
 	# """Backward-compatible API: prepare an NxN pumpkin field using the
 	# general `prepare_field` helper under the hood."""
-	prepare_field(size, primary_crop=Entities.Pumpkin)
+	prepare_field(size, Entities.Pumpkin)
 
 
 def farm_pass_pumpkins(size):
 	# """Backward-compatible API: single-pass pumpkin farming using generic helper."""
-	farm_pass(size, primary_crop=Entities.Pumpkin)
+	farm_pass(size, Entities.Pumpkin)
 
 
 # --- Test helpers ---------------------------------------------------------
@@ -154,6 +154,6 @@ def run_once(size, primary_crop=None, prepare=True, farm=True):
 	# run_once(size, primary_crop=None, prepare=False, farm=True)
 	# """
 	if prepare:
-		prepare_field(size, primary_crop=primary_crop)
+		prepare_field(size, primary_crop)
 	if farm:
-		farm_pass(size, primary_crop=primary_crop)
+		farm_pass(size, primary_crop)
