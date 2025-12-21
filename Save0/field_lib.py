@@ -78,3 +78,42 @@ def farm_pass(size):
 					ensure_carrot()
 			move(North)
 		move(East)
+
+
+# --- Pumpkin helpers -------------------------------------------------------
+
+def ensure_pumpkin():
+	# """Ensure soil is tilled and a pumpkin is planted on the current tile.
+
+	# Pumpkins behave like carrots: they require tilling before planting.
+	# This helper is idempotent (safe to call repeatedly).
+	# """
+	if get_ground_type() != Grounds.Soil:
+		till()
+	if get_entity_type() != Entities.Pumpkin:
+		plant(Entities.Pumpkin)
+
+
+def prepare_pumpkin_field(size):
+	# """Prepare an NxN field dedicated to pumpkins.
+
+	# This tills and plants pumpkins on every tile in the field.
+	# """
+	for i in range(size):
+		for j in range(size):
+			ensure_pumpkin()
+			move(North)
+		move(East)
+
+
+def farm_pass_pumpkins(size):
+	# """Perform a single farming pass for pumpkins: harvest and replant."""
+	for i in range(size):
+		for j in range(size):
+			if can_harvest():
+				harvest()
+				# replant pumpkin if necessary
+				if get_entity_type() != Entities.Pumpkin:
+					ensure_pumpkin()
+			move(North)
+		move(East)
